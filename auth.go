@@ -35,3 +35,11 @@ func (c *Client) Login(username, password string) error {
 	c.token = result.Token.Session
 	return nil
 }
+
+func (c *Client) Token() string {
+	return c.token
+}
+
+func (c *Client) SetToken(token string) {
+	c.token = token
+}

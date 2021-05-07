@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -10,9 +11,18 @@ import (
 
 func main() {
 	c := mangadexv5.NewClient()
-	err := c.Login(os.Args[1], os.Args[2])
+
+	token, err := ioutil.ReadFile("./token.txt")
+
 	if err != nil {
-		log.Fatal(err)
+		err := c.Login(os.Args[1], os.Args[2])
+		if err != nil {
+			log.Fatal(err)
+		}
+		ioutil.WriteFile("./token.txt", []byte(c.Token()), 0755)
+	} else {
+		c.SetToken(string(token))
 	}
-	spew.Dump(c.UserFlolowsManga(1, 0))
+	// spew.Dump(c.UserFlolowsManga(1, 0))
+	spew.Dump(c.ChapterList(nil))
 }
