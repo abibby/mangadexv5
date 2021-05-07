@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/abibby/mangadexv5"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
@@ -23,6 +23,21 @@ func main() {
 	} else {
 		c.SetToken(string(token))
 	}
-	// spew.Dump(c.UserFlolowsManga(1, 0))
-	spew.Dump(c.ChapterList(nil))
+	manga, _, err := c.UserFlolowsManga(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, m := range manga {
+		chapters, _, err := c.ChapterList(&mangadexv5.ChapterListRequest{
+			MangaID: m.ID,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, c := range chapters {
+			fmt.Printf("%s | %s V%d #%s\n", m.Title, c.Title, c.Volume, c.Chapter)
+		}
+	}
 }

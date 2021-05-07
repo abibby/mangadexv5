@@ -1,7 +1,6 @@
 package mangadexv5
 
 import (
-	"github.com/dyninc/qstring"
 	"github.com/pkg/errors"
 )
 
@@ -23,32 +22,27 @@ type Chapter struct {
 }
 
 type ChapterListRequest struct {
-	Limit              int      `json:"limit"`
-	Offset             int      `json:"offset"`
-	IDs                []string `json:"ids"`
-	Title              string   `json:"title"`
-	GroupIDs           []string `json:"groups"`
-	UploaderID         string   `json:"uploader"`
-	MangaID            string   `json:"manga"`
-	Volume             string   `json:"volume"`
-	Chapter            string   `json:"chapter"`
-	TranslatedLanguage string   `json:"translatedLanguage"`
-	CreatedAtSince     string   `json:"createdAtSince"`
-	UpdatedAtSince     string   `json:"updatedAtSince"`
-	PublishAtSince     string   `json:"publishAtSince"`
+	Limit              int      `qstring:"limit,omitempty"`
+	Offset             int      `qstring:"offset,omitempty"`
+	IDs                []string `qstring:"ids,omitempty"`
+	Title              string   `qstring:"title,omitempty"`
+	GroupIDs           []string `qstring:"groups,omitempty"`
+	UploaderID         string   `qstring:"uploader,omitempty"`
+	MangaID            string   `qstring:"manga,omitempty"`
+	Volume             string   `qstring:"volume,omitempty"`
+	Chapter            string   `qstring:"chapter,omitempty"`
+	TranslatedLanguage string   `qstring:"translatedLanguage,omitempty"`
+	CreatedAtSince     string   `qstring:"createdAtSince,omitempty"`
+	UpdatedAtSince     string   `qstring:"updatedAtSince,omitempty"`
+	PublishAtSince     string   `qstring:"publishAtSince,omitempty"`
 }
 
 // ChapterList
 //
 // API Link https://api.mangadex.org/docs.html#operation/get-chapter
 func (c *Client) ChapterList(request *ChapterListRequest) ([]*Chapter, *PaginatedResponse, error) {
-	q, err := qstring.MarshalString(request)
-	if err != nil {
-		return nil, nil, err
-	}
-
 	resp := &PaginatedResponse{}
-	err = c.get("/chapter?"+q, resp)
+	err := c.get("/chapter", request, resp)
 	if err != nil {
 		return nil, nil, err
 	}

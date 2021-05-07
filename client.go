@@ -5,18 +5,23 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"reflect"
 
+	"github.com/dyninc/qstring"
 	"github.com/pkg/errors"
+	"go.uber.org/ratelimit"
 )
 
 type Client struct {
 	token      string
 	httpClient *http.Client
+	limiter    ratelimit.Limiter
 }
 
 func NewClient() *Client {
 	return &Client{
 		httpClient: http.DefaultClient,
+		limiter:    ratelimit.New(200),
 	}
 }
 
@@ -63,8 +68,19 @@ func (c *Client) post(url string, body, result interface{}) error {
 	return nil
 }
 
-func (c *Client) get(url string, result interface{}) error {
-	resp, err := c.request("GET", url, nil)
+func (c *Client) get(url string, params, result interface{}) error {
+	var err error
+	var q string
+
+	if !reflect.ValueOf(params).IsZero() {
+		q, err = qstring.MarshalString(params)
+		if err != nil {
+			return err
+		}
+		q = "?" + q
+	}
+
+	resp, err := c.request("GET", url+q, nil)
 	if err != nil {
 		return err
 	}

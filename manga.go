@@ -1,7 +1,7 @@
 package mangadexv5
 
 import (
-	"fmt"
+	"encoding/json"
 
 	"github.com/pkg/errors"
 )
@@ -9,22 +9,22 @@ import (
 type Manga struct {
 	Model
 
-	Title                  map[string]string   `json:"title"`
-	AltTitles              []map[string]string `json:"altTitles"`
-	Description            map[string]string   `json:"description"`
-	IsLocked               bool                `json:"isLocked"`
-	Links                  []string            `json:"links"`
-	OriginalLanguage       string              `json:"originalLanguage"`
-	LastVolume             string              `json:"lastVolume"`
-	LastChapter            string              `json:"lastChapter"`
-	PublicationDemographic string              `json:"publicationDemographic"`
-	Status                 string              `json:"status"`
-	Year                   int                 `json:"year"`
-	ContentRating          string              `json:"contentRating"`
-	Tags                   []*Tag              `json:"tags"`
-	Version                int                 `json:"version"`
-	CreatedAt              string              `json:"createdAt"`
-	UpdatedAt              string              `json:"updatedAt"`
+	Title                  LangMap         `json:"title"`
+	AltTitles              []LangMap       `json:"altTitles"`
+	Description            LangMap         `json:"description"`
+	IsLocked               bool            `json:"isLocked"`
+	Links                  json.RawMessage `json:"links"`
+	OriginalLanguage       string          `json:"originalLanguage"`
+	LastVolume             string          `json:"lastVolume"`
+	LastChapter            string          `json:"lastChapter"`
+	PublicationDemographic string          `json:"publicationDemographic"`
+	Status                 string          `json:"status"`
+	Year                   int             `json:"year"`
+	ContentRating          string          `json:"contentRating"`
+	Tags                   []*Tag          `json:"tags"`
+	Version                int             `json:"version"`
+	CreatedAt              string          `json:"createdAt"`
+	UpdatedAt              string          `json:"updatedAt"`
 }
 
 type Tag struct {
@@ -37,14 +37,19 @@ type TagAttributes struct {
 	Name map[string]string `json:"name"`
 }
 
+type UserFlolowsMangaRequest struct {
+	Limit  int `qstring:"limit,omitempty"`
+	Offset int `qstring:"offset,omitempty"`
+}
+
 // UserFlolowsManga
 //
 // API Link https://api.mangadex.org/docs.html#operation/get-user-follows-manga
-func (c *Client) UserFlolowsManga(limit, offset int) ([]*Manga, *PaginatedResponse, error) {
+func (c *Client) UserFlolowsManga(request *UserFlolowsMangaRequest) ([]*Manga, *PaginatedResponse, error) {
 	resp := &PaginatedResponse{}
-	err := c.get(fmt.Sprintf("/user/follows/manga?limit=%d&offset=%d", limit, offset), resp)
+	err := c.get("/user/follows/manga", request, resp)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.Wrap(err, "request failed")
 	}
 
 	manga := []*Manga{}
