@@ -1,6 +1,8 @@
 package mangadexv5
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 )
 
@@ -55,5 +57,34 @@ func (c *Client) ChapterList(request *ChapterListRequest) ([]*Chapter, *Paginate
 	}
 
 	return chapters, resp, err
+
+}
+
+type UserFeedChaptersRequest struct {
+	Limit          int        `qstring:"limit,omitempty"`
+	Offset         int        `qstring:"offset,omitempty"`
+	Locales        []string   `qstring:"locales,omitempty"`
+	CreatedAtSince *time.Time `qstring:"createdAtSince,omitempty"`
+	UpdatedAtSince *time.Time `qstring:"updatedAtSince,omitempty"`
+	PublishAtSince *time.Time `qstring:"publishAtSince,omitempty"`
+}
+
+// UserFeedChapters
+//
+// API Link https://api.mangadex.org/docs.html#operation/get-user-follows-manga-feed
+func (c *Client) UserFeedChapters(request *UserFeedChaptersRequest) ([]*Chapter, *PaginatedResponse, error) {
+	resp := &PaginatedResponse{}
+	err := c.get("/user/follows/manga/feed", request, resp)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "request failed")
+	}
+
+	chapters := []*Chapter{}
+	err = resp.loadResults(&chapters)
+	if err != nil {
+		return nil, resp, errors.Wrap(err, "failed to load chapters from response")
+	}
+
+	return chapters, resp, nil
 
 }

@@ -31,17 +31,21 @@ type Relationship struct {
 	Type string `json:"type"`
 }
 
-type SetIDer interface {
-	SetID(id string)
+type Modeler interface {
+	update(id string, relationships []*Relationship)
 }
 
 type Model struct {
-	ID string
+	ID            string
+	Relationships []*Relationship
 }
 
-func (m *Model) SetID(id string) {
+func (m *Model) update(id string, relationships []*Relationship) {
 	m.ID = id
+	m.Relationships = relationships
 }
+
+var _ Modeler = &Model{}
 
 func (r *PaginatedResponse) loadResults(v interface{}) error {
 	rv := reflect.ValueOf(v).Elem()
@@ -49,8 +53,8 @@ func (r *PaginatedResponse) loadResults(v interface{}) error {
 	for _, result := range r.Results {
 		element := reflect.New(rv.Type().Elem().Elem()).Interface()
 
-		if ider, ok := element.(SetIDer); ok {
-			ider.SetID(result.Data.ID)
+		if ider, ok := element.(Modeler); ok {
+			ider.update(result.Data.ID, result.Relationships)
 		}
 
 		err := json.Unmarshal(result.Data.Attributes, element)
