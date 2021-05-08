@@ -3,24 +3,34 @@ package mangadexv5
 import (
 	"time"
 
+	"github.com/abibby/nulls"
 	"github.com/pkg/errors"
 )
 
 type Chapter struct {
 	Model
 
-	Title              string   `json:"title"`
-	Volume             int      `json:"volume"`
-	Chapter            string   `json:"chapter"`
-	TranslatedLanguage string   `json:"translatedLanguage"`
-	Hash               string   `json:"hash"`
-	Data               []string `json:"data"`
-	DataSaver          []string `json:"dataSaver"`
-	Uploader           string   `json:"uploader"`
-	Version            int      `json:"version"`
-	CreatedAt          string   `json:"createdAt"`
-	UpdatedAt          string   `json:"updatedAt"`
-	PublishAt          string   `json:"publishAt"`
+	Title              string     `json:"title"`
+	Volume             *nulls.Int `json:"volume"`
+	Chapter            string     `json:"chapter"`
+	TranslatedLanguage string     `json:"translatedLanguage"`
+	Hash               string     `json:"hash"`
+	Data               []string   `json:"data"`
+	DataSaver          []string   `json:"dataSaver"`
+	Uploader           string     `json:"uploader"`
+	Version            int        `json:"version"`
+	CreatedAt          string     `json:"createdAt"`
+	UpdatedAt          string     `json:"updatedAt"`
+	PublishAt          string     `json:"publishAt"`
+
+	manga *Manga
+}
+
+func (c *Chapter) Manga() *Manga {
+	if c.manga == nil {
+		return &Manga{}
+	}
+	return c.manga
 }
 
 type ChapterListRequest struct {
@@ -63,10 +73,12 @@ func (c *Client) ChapterList(request *ChapterListRequest) ([]*Chapter, *Paginate
 type UserFeedChaptersRequest struct {
 	Limit          int        `qstring:"limit,omitempty"`
 	Offset         int        `qstring:"offset,omitempty"`
-	Locales        []string   `qstring:"locales,omitempty"`
+	Locales        []string   `qstring:"locales[],omitempty"`
 	CreatedAtSince *time.Time `qstring:"createdAtSince,omitempty"`
 	UpdatedAtSince *time.Time `qstring:"updatedAtSince,omitempty"`
 	PublishAtSince *time.Time `qstring:"publishAtSince,omitempty"`
+	OrderCreatedAt string     `qstring:"order[createdAt],omitempty"`
+	OrderUpdatedAt string     `qstring:"order[updatedAt],omitempty"`
 }
 
 // UserFeedChapters
@@ -87,4 +99,35 @@ func (c *Client) UserFeedChapters(request *UserFeedChaptersRequest) ([]*Chapter,
 
 	return chapters, resp, nil
 
+}
+
+func (c *Client) AttachManga(chapters []*Chapter) error {
+	manga := map[string]*Manga{}
+
+	for _, chapter := range chapters {
+		manga[chapter.Relationships.Get("manga")] = nil
+	}
+
+	mangaIDs := []string{}
+	for id := range manga {
+		mangaIDs = append(mangaIDs, id)
+	}
+
+	mangaList, _, err := c.MangaList(&MangaListRequest{
+		Limit: 100,
+		IDs:   mangaIDs,
+	})
+	if err != nil {
+		return err
+	}
+
+	for _, m := range mangaList {
+		manga[m.ID] = m
+	}
+
+	for _, chapter := range chapters {
+		chapter.manga = manga[chapter.Relationships.Get("manga")]
+	}
+
+	return nil
 }

@@ -3,6 +3,7 @@ module github.com/abibby/mangadexv5
 go 1.16
 
 require (
+	github.com/abibby/nulls v0.0.0-20201012135326-e405c54bf4e5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dyninc/qstring v0.0.0-20160719172318-ab5840a88e81 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

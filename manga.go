@@ -15,7 +15,7 @@ type Manga struct {
 	IsLocked               bool            `json:"isLocked"`
 	Links                  json.RawMessage `json:"links"`
 	OriginalLanguage       string          `json:"originalLanguage"`
-	LastVolume             string          `json:"lastVolume"`
+	LastVolume             int             `json:"lastVolume"`
 	LastChapter            string          `json:"lastChapter"`
 	PublicationDemographic string          `json:"publicationDemographic"`
 	Status                 string          `json:"status"`
@@ -35,6 +35,33 @@ type Tag struct {
 
 type TagAttributes struct {
 	Name map[string]string `json:"name"`
+}
+
+type MangaListRequest struct {
+	Limit  int      `qstring:"limit,omitempty"`
+	Offset int      `qstring:"offset,omitempty"`
+	Title  string   `qstring:"title,omitempty"`
+	IDs    []string `qstring:"ids[],omitempty"`
+}
+
+// MangaList
+//
+// API Link https://api.mangadex.org/docs.html#operation/get-search-manga
+func (c *Client) MangaList(request *MangaListRequest) ([]*Manga, *PaginatedResponse, error) {
+	resp := &PaginatedResponse{}
+	err := c.get("/manga", request, resp)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "request failed")
+	}
+
+	manga := []*Manga{}
+	err = resp.loadResults(&manga)
+	if err != nil {
+		return nil, resp, errors.Wrap(err, "failed to load manga from response")
+	}
+
+	return manga, resp, nil
+
 }
 
 type UserFlolowsMangaRequest struct {

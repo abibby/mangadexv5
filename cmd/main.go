@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -10,27 +9,37 @@ import (
 )
 
 func main() {
-	c := mangadexv5.NewClient()
+	c := mangadexv5.NewClient("./token.json")
 
-	token, err := ioutil.ReadFile("./token.txt")
+	// _, err := ioutil.ReadFile("./token.txt")
 
+	err := c.Authenticate(os.Args[1], os.Args[2])
 	if err != nil {
-		err := c.Login(os.Args[1], os.Args[2])
-		if err != nil {
-			log.Fatal(err)
-		}
-		ioutil.WriteFile("./token.txt", []byte(c.Token()), 0755)
-	} else {
-		c.SetToken(string(token))
+		log.Fatal(err)
 	}
 
-	chapters, _, err := c.UserFeedChapters(&mangadexv5.UserFeedChaptersRequest{})
+	// manga, _, err := c.UserFlolowsManga(&mangadexv5.UserFlolowsMangaRequest{
+	// 	Limit: 100,
+	// })
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	chapters, _, err := c.UserFeedChapters(&mangadexv5.UserFeedChaptersRequest{
+		Limit:          50,
+		OrderCreatedAt: "asc",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = c.AttachManga(chapters)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, c := range chapters {
-		fmt.Printf("%s | %s V%d #%s\n", "", c.Title, c.Volume, c.Chapter)
+		fmt.Printf("%s | %s V%d #%s, %s\n", c.Manga().Title, c.Title, c.Volume, c.Chapter, c.CreatedAt)
 	}
 
 	// manga, _, err := c.UserFlolowsManga(nil)

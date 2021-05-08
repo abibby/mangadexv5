@@ -31,16 +31,27 @@ type Relationship struct {
 	Type string `json:"type"`
 }
 
+type RelationshipList []*Relationship
+
+func (l RelationshipList) Get(relationship string) string {
+	for _, r := range l {
+		if r.Type == relationship {
+			return r.ID
+		}
+	}
+	return ""
+}
+
 type Modeler interface {
-	update(id string, relationships []*Relationship)
+	update(id string, relationships RelationshipList)
 }
 
 type Model struct {
 	ID            string
-	Relationships []*Relationship
+	Relationships RelationshipList
 }
 
-func (m *Model) update(id string, relationships []*Relationship) {
+func (m *Model) update(id string, relationships RelationshipList) {
 	m.ID = id
 	m.Relationships = relationships
 }
