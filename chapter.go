@@ -75,7 +75,7 @@ func (c *Client) ChapterList(request *ChapterListRequest) ([]*Chapter, *Paginate
 type UserFeedChaptersRequest struct {
 	Limit          int       `qstring:"limit,omitempty"`
 	Offset         int       `qstring:"offset,omitempty"`
-	Locales        []string  `qstring:"locales,omitempty"`
+	Locales        []string  `qstring:"locales[],omitempty"`
 	CreatedAtSince time.Time `qstring:"createdAtSince,omitempty"`
 	UpdatedAtSince time.Time `qstring:"updatedAtSince,omitempty"`
 	PublishAtSince time.Time `qstring:"publishAtSince,omitempty"`
