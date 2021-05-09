@@ -28,7 +28,7 @@ func NewClient(tokenFile string) *Client {
 	}
 }
 
-func (c *Client) request(method, url string, body io.Reader, retry bool) (*http.Response, error) {
+func (c *Client) request(method, url string, body io.Reader) (*http.Response, error) {
 	log.Print(url)
 	r, err := http.NewRequest(method, "https://api.mangadex.org"+url, body)
 	if err != nil {
@@ -44,14 +44,6 @@ func (c *Client) request(method, url string, body io.Reader, retry bool) (*http.
 		return nil, errors.Wrap(err, "request failed")
 	}
 
-	if resp.StatusCode == 401 && retry {
-		err := c.RefreshToken(c.token.Refresh)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to refresh token")
-		}
-
-		return c.request(method, url, body, retry)
-	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return nil, NewAPIResponseError(resp)
 	}
@@ -66,7 +58,7 @@ func (c *Client) post(url string, body, result interface{}) error {
 		return errors.Wrap(err, "failed to encode request body")
 	}
 
-	resp, err := c.request("POST", url, bodyReader, true)
+	resp, err := c.request("POST", url, bodyReader)
 	if err != nil {
 		return err
 	}
@@ -92,7 +84,7 @@ func (c *Client) get(url string, params, result interface{}) error {
 		q = "?" + q
 	}
 
-	resp, err := c.request("GET", url+q, nil, true)
+	resp, err := c.request("GET", url+q, nil)
 	if err != nil {
 		return err
 	}
