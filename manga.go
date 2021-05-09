@@ -1,30 +1,33 @@
 package mangadexv5
 
 import (
-	"encoding/json"
-
 	"github.com/pkg/errors"
 )
 
 type Manga struct {
 	Model
 
-	Title                  LangMap         `json:"title"`
-	AltTitles              []LangMap       `json:"altTitles"`
-	Description            LangMap         `json:"description"`
-	IsLocked               bool            `json:"isLocked"`
-	Links                  json.RawMessage `json:"links"`
-	OriginalLanguage       string          `json:"originalLanguage"`
-	LastVolume             int             `json:"lastVolume"`
-	LastChapter            string          `json:"lastChapter"`
-	PublicationDemographic string          `json:"publicationDemographic"`
-	Status                 string          `json:"status"`
-	Year                   int             `json:"year"`
-	ContentRating          string          `json:"contentRating"`
-	Tags                   []*Tag          `json:"tags"`
-	Version                int             `json:"version"`
-	CreatedAt              string          `json:"createdAt"`
-	UpdatedAt              string          `json:"updatedAt"`
+	Title                  LangMap     `json:"title"`
+	AltTitles              []LangMap   `json:"altTitles"`
+	Description            LangMap     `json:"description"`
+	IsLocked               bool        `json:"isLocked"`
+	Links                  *MangaLinks `json:"links"`
+	OriginalLanguage       string      `json:"originalLanguage"`
+	LastVolume             int         `json:"lastVolume"`
+	LastChapter            string      `json:"lastChapter"`
+	PublicationDemographic string      `json:"publicationDemographic"`
+	Status                 string      `json:"status"`
+	Year                   int         `json:"year"`
+	ContentRating          string      `json:"contentRating"`
+	Tags                   []*Tag      `json:"tags"`
+	Version                int         `json:"version"`
+	CreatedAt              string      `json:"createdAt"`
+	UpdatedAt              string      `json:"updatedAt"`
+}
+
+// https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data
+type MangaLinks struct {
+	AnilistID string `json:"al"`
 }
 
 type Tag struct {

@@ -19,9 +19,9 @@ type Chapter struct {
 	DataSaver          []string   `json:"dataSaver"`
 	Uploader           string     `json:"uploader"`
 	Version            int        `json:"version"`
-	CreatedAt          string     `json:"createdAt"`
-	UpdatedAt          string     `json:"updatedAt"`
-	PublishAt          string     `json:"publishAt"`
+	CreatedAt          time.Time  `json:"createdAt"`
+	UpdatedAt          time.Time  `json:"updatedAt"`
+	PublishAt          time.Time  `json:"publishAt"`
 
 	manga *Manga
 }
@@ -34,21 +34,21 @@ func (c *Chapter) Manga() *Manga {
 }
 
 type ChapterListRequest struct {
-	Limit              int      `qstring:"limit,omitempty"`
-	Offset             int      `qstring:"offset,omitempty"`
-	IDs                []string `qstring:"ids,omitempty"`
-	Title              string   `qstring:"title,omitempty"`
-	GroupIDs           []string `qstring:"groups,omitempty"`
-	UploaderID         string   `qstring:"uploader,omitempty"`
-	MangaID            string   `qstring:"manga,omitempty"`
-	Volume             string   `qstring:"volume,omitempty"`
-	Chapter            string   `qstring:"chapter,omitempty"`
-	TranslatedLanguage string   `qstring:"translatedLanguage,omitempty"`
-	CreatedAtSince     string   `qstring:"createdAtSince,omitempty"`
-	UpdatedAtSince     string   `qstring:"updatedAtSince,omitempty"`
-	PublishAtSince     string   `qstring:"publishAtSince,omitempty"`
-	OrderCreatedAt     string   `qstring:"order[createdAt],omitempty"`
-	OrderUpdatedAt     string   `qstring:"order[updatedAt],omitempty"`
+	Limit              int       `qstring:"limit,omitempty"`
+	Offset             int       `qstring:"offset,omitempty"`
+	IDs                []string  `qstring:"ids,omitempty"`
+	Title              string    `qstring:"title,omitempty"`
+	GroupIDs           []string  `qstring:"groups,omitempty"`
+	UploaderID         string    `qstring:"uploader,omitempty"`
+	MangaID            string    `qstring:"manga,omitempty"`
+	Volume             string    `qstring:"volume,omitempty"`
+	Chapter            string    `qstring:"chapter,omitempty"`
+	TranslatedLanguage string    `qstring:"translatedLanguage,omitempty"`
+	CreatedAtSince     time.Time `qstring:"createdAtSince,omitempty"`
+	UpdatedAtSince     time.Time `qstring:"updatedAtSince,omitempty"`
+	PublishAtSince     time.Time `qstring:"publishAtSince,omitempty"`
+	OrderCreatedAt     string    `qstring:"order[createdAt],omitempty"`
+	OrderUpdatedAt     string    `qstring:"order[updatedAt],omitempty"`
 }
 
 // ChapterList

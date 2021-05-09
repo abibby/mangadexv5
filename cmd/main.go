@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/abibby/mangadexv5"
 )
@@ -18,8 +17,9 @@ func main() {
 	}
 
 	chapters, _, err := c.UserFeedChapters(&mangadexv5.UserFeedChaptersRequest{
-		Limit:          50,
-		CreatedAtSince: time.Now().Add(-24 * 60 * time.Hour),
+		Limit:   50,
+		Locales: []string{"en"},
+		// CreatedAtSince: time.Now().Add(-24 * 60 * time.Hour),
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -31,7 +31,7 @@ func main() {
 	}
 
 	for _, c := range chapters {
-		fmt.Printf("%s | %s V%d #%s, %s\n", c.Manga().Title, c.Title, c.Volume, c.Chapter, c.CreatedAt)
+		fmt.Printf("%s | %s V%d #%s, %s\n", c.Manga().Title, c.Title, c.Volume, c.Chapter, c.PublishAt)
 	}
 
 }
