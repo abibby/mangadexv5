@@ -47,6 +47,8 @@ type ChapterListRequest struct {
 	CreatedAtSince     string   `qstring:"createdAtSince,omitempty"`
 	UpdatedAtSince     string   `qstring:"updatedAtSince,omitempty"`
 	PublishAtSince     string   `qstring:"publishAtSince,omitempty"`
+	OrderCreatedAt     string   `qstring:"order[createdAt],omitempty"`
+	OrderUpdatedAt     string   `qstring:"order[updatedAt],omitempty"`
 }
 
 // ChapterList
@@ -71,14 +73,12 @@ func (c *Client) ChapterList(request *ChapterListRequest) ([]*Chapter, *Paginate
 }
 
 type UserFeedChaptersRequest struct {
-	Limit          int        `qstring:"limit,omitempty"`
-	Offset         int        `qstring:"offset,omitempty"`
-	Locales        []string   `qstring:"locales[],omitempty"`
-	CreatedAtSince *time.Time `qstring:"createdAtSince,omitempty"`
-	UpdatedAtSince *time.Time `qstring:"updatedAtSince,omitempty"`
-	PublishAtSince *time.Time `qstring:"publishAtSince,omitempty"`
-	OrderCreatedAt string     `qstring:"order[createdAt],omitempty"`
-	OrderUpdatedAt string     `qstring:"order[updatedAt],omitempty"`
+	Limit          int       `qstring:"limit,omitempty"`
+	Offset         int       `qstring:"offset,omitempty"`
+	Locales        []string  `qstring:"locales,omitempty"`
+	CreatedAtSince time.Time `qstring:"createdAtSince,omitempty"`
+	UpdatedAtSince time.Time `qstring:"updatedAtSince,omitempty"`
+	PublishAtSince time.Time `qstring:"publishAtSince,omitempty"`
 }
 
 // UserFeedChapters
