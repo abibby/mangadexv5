@@ -1,6 +1,7 @@
 package mangadexv5
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/abibby/nulls"
@@ -10,18 +11,18 @@ import (
 type Chapter struct {
 	Model
 
-	Title              string     `json:"title"`
-	Volume             *nulls.Int `json:"volume"`
-	Chapter            string     `json:"chapter"`
-	TranslatedLanguage string     `json:"translatedLanguage"`
-	Hash               string     `json:"hash"`
-	Data               []string   `json:"data"`
-	DataSaver          []string   `json:"dataSaver"`
-	Uploader           string     `json:"uploader"`
-	Version            int        `json:"version"`
-	CreatedAt          time.Time  `json:"createdAt"`
-	UpdatedAt          time.Time  `json:"updatedAt"`
-	PublishAt          time.Time  `json:"publishAt"`
+	Title              string        `json:"title"`
+	Volume             *nulls.String `json:"volume"`
+	Chapter            string        `json:"chapter"`
+	TranslatedLanguage string        `json:"translatedLanguage"`
+	Hash               string        `json:"hash"`
+	Data               []string      `json:"data"`
+	DataSaver          []string      `json:"dataSaver"`
+	Uploader           string        `json:"uploader"`
+	Version            int           `json:"version"`
+	CreatedAt          time.Time     `json:"createdAt"`
+	UpdatedAt          time.Time     `json:"updatedAt"`
+	PublishAt          time.Time     `json:"publishAt"`
 
 	manga *Manga
 }
@@ -94,6 +95,7 @@ func (c *Client) UserFeedChapters(request *UserFeedChaptersRequest) ([]*Chapter,
 	chapters := []*Chapter{}
 	err = resp.loadResults(&chapters)
 	if err != nil {
+		fmt.Printf("%s\n", resp.Results[0].Data.Attributes)
 		return nil, resp, errors.Wrap(err, "failed to load chapters from response")
 	}
 

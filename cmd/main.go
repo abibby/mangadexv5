@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	c := mangadexv5.NewClient("./token.json")
+	c := mangadexv5.NewClient()
 
-	err := c.Authenticate(os.Args[1], os.Args[2])
+	err := c.Authenticate(os.Args[1], os.Args[2], "./token.json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,12 +22,12 @@ func main() {
 		// CreatedAtSince: time.Now().Add(-24 * 60 * time.Hour),
 	})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("%+v", err)
 	}
 
 	err = c.AttachManga(chapters)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("%+v", err)
 	}
 
 	for _, c := range chapters {

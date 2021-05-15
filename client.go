@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"reflect"
+	"time"
 
 	"github.com/dyninc/qstring"
 	"github.com/pkg/errors"
@@ -15,21 +15,39 @@ import (
 
 type Client struct {
 	token      *LoginToken
-	tokenFile  string
 	httpClient *http.Client
 	limiter    ratelimit.Limiter
 }
 
-func NewClient(tokenFile string) *Client {
-	return &Client{
+type Config func(*Client) *Client
+
+func NewClient(configs ...Config) *Client {
+	c := &Client{
 		httpClient: http.DefaultClient,
-		limiter:    ratelimit.New(200),
-		tokenFile:  tokenFile,
+		limiter:    ratelimit.New(int(200 * time.Millisecond)),
+	}
+	for _, config := range configs {
+		c = config(c)
+	}
+	return c
+}
+
+func RateLimit(duration time.Duration) Config {
+	return func(c *Client) *Client {
+		c.limiter = ratelimit.New(int(duration))
+		return c
+	}
+}
+
+func HttpClient(client *http.Client) Config {
+	return func(c *Client) *Client {
+		c.httpClient = client
+		return c
 	}
 }
 
 func (c *Client) request(method, url string, body io.Reader) (*http.Response, error) {
-	log.Print(url)
+	c.limiter.Take()
 	r, err := http.NewRequest(method, "https://api.mangadex.org"+url, body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

@@ -51,19 +51,8 @@ func (c *Client) Token() *LoginToken {
 	return c.token
 }
 
-func (c *Client) SetToken(token *LoginToken) error {
+func (c *Client) SetToken(token *LoginToken) {
 	c.token = token
-	if c.tokenFile != "" {
-		b, err := json.Marshal(c.token)
-		if err != nil {
-			return errors.Wrap(err, "failed to encode token json")
-		}
-		err = ioutil.WriteFile(c.tokenFile, b, 0755)
-		if err != nil {
-			return errors.Wrap(err, "failed to write token to disk")
-		}
-	}
-	return nil
 }
 
 type RefreshTokenRequest struct {
@@ -95,8 +84,8 @@ func (c *Client) RefreshToken(refresh string) error {
 	return nil
 }
 
-func (c *Client) Authenticate(username, password string) error {
-	b, err := ioutil.ReadFile(c.tokenFile)
+func (c *Client) Authenticate(username, password, tokenFile string) error {
+	b, err := ioutil.ReadFile(tokenFile)
 	if err != nil {
 		return errors.Wrap(err, "could not open token file")
 	}
@@ -117,6 +106,17 @@ func (c *Client) Authenticate(username, password string) error {
 	} else {
 		log.Print("login")
 		return c.Login(username, password)
+	}
+
+	if tokenFile != "" {
+		b, err := json.Marshal(c.token)
+		if err != nil {
+			return errors.Wrap(err, "failed to encode token json")
+		}
+		err = ioutil.WriteFile(tokenFile, b, 0755)
+		if err != nil {
+			return errors.Wrap(err, "failed to write token to disk")
+		}
 	}
 
 	return nil
