@@ -3,8 +3,8 @@ package mangadexv5
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -86,7 +86,9 @@ func (c *Client) RefreshToken(refresh string) error {
 
 func (c *Client) Authenticate(username, password, tokenFile string) error {
 	b, err := ioutil.ReadFile(tokenFile)
-	if err != nil {
+	if errors.Is(fs.ErrNotExist, fs.ErrNotExist) {
+		b = []byte("{}")
+	} else if err != nil {
 		return errors.Wrap(err, "could not open token file")
 	}
 
@@ -98,14 +100,14 @@ func (c *Client) Authenticate(username, password, tokenFile string) error {
 	}
 
 	if token.CreatedAt.After(time.Now().Add(-10 * time.Minute)) {
-		log.Print("use existing token")
 		c.token = token
 	} else if token.CreatedAt.After(time.Now().Add(-4 * time.Hour)) {
-		log.Print("refresh token")
-		return c.RefreshToken(token.Refresh)
+		err = c.RefreshToken(token.Refresh)
 	} else {
-		log.Print("login")
-		return c.Login(username, password)
+		err = c.Login(username, password)
+	}
+	if err != nil {
+		return err
 	}
 
 	if tokenFile != "" {
