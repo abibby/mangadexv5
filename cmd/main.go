@@ -31,7 +31,7 @@ func main() {
 	}
 
 	for _, c := range chapters {
-		fmt.Printf("%s | %s V%d #%s, %s\n", c.Manga().Title, c.Title, c.Volume, c.Chapter, c.PublishAt)
+		fmt.Printf("%s %s | %s V%d #%s, %s\n", c.Manga().ID, c.Manga().Title, c.Title, c.Volume, c.Chapter, c.PublishAt)
 	}
 
 }

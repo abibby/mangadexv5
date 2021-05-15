@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/dyninc/qstring"
@@ -94,7 +93,7 @@ func (c *Client) get(url string, params, result interface{}) error {
 	var err error
 	var q string
 
-	if !reflect.ValueOf(params).IsZero() {
+	if params != nil {
 		q, err = qstring.MarshalString(params)
 		if err != nil {
 			return err
