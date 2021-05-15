@@ -2,6 +2,7 @@ package mangadexv5
 
 import (
 	"fmt"
+	"path"
 	"time"
 
 	"github.com/abibby/nulls"
@@ -32,6 +33,14 @@ func (c *Chapter) Manga() *Manga {
 		return &Manga{}
 	}
 	return c.manga
+}
+
+func (c *Chapter) PageURL(atHomeServer *AtHomeServerResponse, page int) string {
+	return atHomeServer.BaseURL + "/" + path.Join("data", c.Hash, c.Data[page])
+}
+
+func (c *Chapter) PageURLDataSaver(atHomeServer *AtHomeServerResponse, page int) string {
+	return atHomeServer.BaseURL + "/" + path.Join("data-saver", c.Hash, c.DataSaver[page])
 }
 
 type ChapterListRequest struct {
