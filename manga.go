@@ -47,6 +47,16 @@ type MangaListRequest struct {
 	IDs    []string `qstring:"ids[],omitempty"`
 }
 
+func (r *MangaListRequest) SetOffset(offset int) {
+	r.Offset = offset
+}
+
+func (r *MangaListRequest) SetLimit(limit int) {
+	r.Limit = limit
+}
+
+var _ PaginatedRequest = &MangaListRequest{}
+
 // MangaList
 //
 // API Link https://api.mangadex.org/docs.html#operation/get-search-manga

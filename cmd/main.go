@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/abibby/mangadexv5"
 )
@@ -15,23 +16,32 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var response *mangadexv5.PaginatedResponse
 
-	chapters, _, err := c.UserFeedChapters(&mangadexv5.UserFeedChaptersRequest{
-		Limit:   50,
+	request := &mangadexv5.UserFeedChaptersRequest{
+		Limit:   100,
 		Locales: []string{"en"},
-		// CreatedAtSince: time.Now().Add(-24 * 60 * time.Hour),
-	})
-	if err != nil {
-		log.Fatalf("%+v", err)
+		CreatedAtSince: time.Now().
+			Add(-24 * 60 * time.Hour).
+			Format("2006-01-02T15:04:05"),
 	}
 
-	err = c.AttachManga(chapters)
-	if err != nil {
-		log.Fatalf("%+v", err)
-	}
+	for mangadexv5.EachPage(request, response) {
+		var chapters []*mangadexv5.Chapter
+		chapters, response, err = c.UserFeedChapters(request)
+		if err != nil {
+			log.Fatalf("%+v", err)
+		}
 
-	for _, c := range chapters {
-		fmt.Printf("%s %s | %s V%d #%s, %s\n", c.Manga().ID, c.Manga().Title, c.Title, c.Volume, c.Chapter, c.PublishAt)
+		err = c.AttachManga(chapters)
+		if err != nil {
+			log.Fatalf("%+v", err)
+		}
+
+		for _, c := range chapters {
+			fmt.Printf("%s %s | %s V%d #%s, %s\n", c.Manga().ID, c.Manga().Title, c.Title, c.Volume, c.Chapter, c.PublishAt)
+
+		}
 	}
 
 }

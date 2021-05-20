@@ -7,6 +7,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+type PaginatedRequest interface {
+	SetOffset(offset int)
+	SetLimit(limit int)
+}
+
 type PaginatedResponse struct {
 	Results []*Result `json:"results"`
 	Limit   int       `json:"limit"`
@@ -78,4 +83,19 @@ func (r *PaginatedResponse) loadResults(v interface{}) error {
 	reflect.ValueOf(v).Elem().Set(rv)
 
 	return nil
+}
+
+func EachPage(request PaginatedRequest, response *PaginatedResponse) bool {
+	if response == nil {
+		return true
+	}
+
+	if response.Offset+response.Limit > response.Total {
+		return false
+	}
+
+	request.SetLimit(response.Limit)
+	request.SetOffset(response.Offset + response.Limit)
+
+	return true
 }

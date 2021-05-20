@@ -86,10 +86,20 @@ type UserFeedChaptersRequest struct {
 	Limit          int       `qstring:"limit,omitempty"`
 	Offset         int       `qstring:"offset,omitempty"`
 	Locales        []string  `qstring:"locales[],omitempty"`
-	CreatedAtSince time.Time `qstring:"createdAtSince,omitempty"`
+	CreatedAtSince string    `qstring:"createdAtSince,omitempty"`
 	UpdatedAtSince time.Time `qstring:"updatedAtSince,omitempty"`
 	PublishAtSince time.Time `qstring:"publishAtSince,omitempty"`
 }
+
+func (r *UserFeedChaptersRequest) SetOffset(offset int) {
+	r.Offset = offset
+}
+
+func (r *UserFeedChaptersRequest) SetLimit(limit int) {
+	r.Limit = limit
+}
+
+var _ PaginatedRequest = &UserFeedChaptersRequest{}
 
 // UserFeedChapters
 //
@@ -124,21 +134,28 @@ func (c *Client) AttachManga(chapters []*Chapter) error {
 		mangaIDs = append(mangaIDs, id)
 	}
 
-	mangaList, _, err := c.MangaList(&MangaListRequest{
+	var mangaList []*Manga
+	var response *PaginatedResponse
+	var err error
+
+	request := &MangaListRequest{
 		Limit: 100,
 		IDs:   mangaIDs,
-	})
-	if err != nil {
-		return err
 	}
 
-	for _, m := range mangaList {
-		manga[m.ID] = m
-	}
+	for EachPage(request, response) {
+		mangaList, response, err = c.MangaList(request)
+		if err != nil {
+			return err
+		}
 
-	for _, chapter := range chapters {
-		chapter.manga = manga[chapter.Relationships.Get("manga")]
-	}
+		for _, m := range mangaList {
+			manga[m.ID] = m
+		}
 
+		for _, chapter := range chapters {
+			chapter.manga = manga[chapter.Relationships.Get("manga")]
+		}
+	}
 	return nil
 }
