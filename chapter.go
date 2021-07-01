@@ -64,6 +64,16 @@ type ChapterListRequest struct {
 	OrderChapter       Order     `qstring:"order[chapter],omitempty"`
 }
 
+func (r *ChapterListRequest) SetOffset(offset int) {
+	r.Offset = offset
+}
+
+func (r *ChapterListRequest) SetLimit(limit int) {
+	r.Limit = limit
+}
+
+var _ PaginatedRequest = &ChapterListRequest{}
+
 // ChapterList
 //
 // API Link https://api.mangadex.org/docs.html#operation/get-chapter
