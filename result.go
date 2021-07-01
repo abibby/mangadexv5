@@ -7,6 +7,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+type Order string
+
+const (
+	OrderAscending  = Order("asc")
+	OrderDescending = Order("desc")
+)
+
 type PaginatedRequest interface {
 	SetOffset(offset int)
 	SetLimit(limit int)

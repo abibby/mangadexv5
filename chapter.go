@@ -46,19 +46,22 @@ func (c *Chapter) PageURLDataSaver(atHomeServer *AtHomeServerResponse, page int)
 type ChapterListRequest struct {
 	Limit              int       `qstring:"limit,omitempty"`
 	Offset             int       `qstring:"offset,omitempty"`
-	IDs                []string  `qstring:"ids,omitempty"`
+	IDs                []string  `qstring:"ids[],omitempty"`
 	Title              string    `qstring:"title,omitempty"`
-	GroupIDs           []string  `qstring:"groups,omitempty"`
+	GroupIDs           []string  `qstring:"groups[],omitempty"`
 	UploaderID         string    `qstring:"uploader,omitempty"`
 	MangaID            string    `qstring:"manga,omitempty"`
-	Volume             string    `qstring:"volume,omitempty"`
-	Chapter            string    `qstring:"chapter,omitempty"`
-	TranslatedLanguage string    `qstring:"translatedLanguage,omitempty"`
+	VolumeIDs          string    `qstring:"volume[],omitempty"`
+	ChapterIDs         string    `qstring:"chapter[],omitempty"`
+	TranslatedLanguage []string  `qstring:"translatedLanguage[],omitempty"`
 	CreatedAtSince     time.Time `qstring:"createdAtSince,omitempty"`
 	UpdatedAtSince     time.Time `qstring:"updatedAtSince,omitempty"`
 	PublishAtSince     time.Time `qstring:"publishAtSince,omitempty"`
-	OrderCreatedAt     string    `qstring:"order[createdAt],omitempty"`
-	OrderUpdatedAt     string    `qstring:"order[updatedAt],omitempty"`
+	OrderCreatedAt     Order     `qstring:"order[createdAt],omitempty"`
+	OrderUpdatedAt     Order     `qstring:"order[updatedAt],omitempty"`
+	OrderPublishAt     Order     `qstring:"order[publishAt],omitempty"`
+	OrderVolume        Order     `qstring:"order[volume],omitempty"`
+	OrderChapter       Order     `qstring:"order[chapter],omitempty"`
 }
 
 // ChapterList
@@ -83,12 +86,12 @@ func (c *Client) ChapterList(request *ChapterListRequest) ([]*Chapter, *Paginate
 }
 
 type UserFeedChaptersRequest struct {
-	Limit          int       `qstring:"limit,omitempty"`
-	Offset         int       `qstring:"offset,omitempty"`
-	Locales        []string  `qstring:"locales[],omitempty"`
-	CreatedAtSince string    `qstring:"createdAtSince,omitempty"`
-	UpdatedAtSince time.Time `qstring:"updatedAtSince,omitempty"`
-	PublishAtSince time.Time `qstring:"publishAtSince,omitempty"`
+	Limit              int       `qstring:"limit,omitempty"`
+	Offset             int       `qstring:"offset,omitempty"`
+	TranslatedLanguage []string  `qstring:"translatedLanguage[],omitempty"`
+	CreatedAtSince     time.Time `qstring:"createdAtSince,omitempty"`
+	UpdatedAtSince     time.Time `qstring:"updatedAtSince,omitempty"`
+	PublishAtSince     string    `qstring:"publishAtSince,omitempty"`
 }
 
 func (r *UserFeedChaptersRequest) SetOffset(offset int) {

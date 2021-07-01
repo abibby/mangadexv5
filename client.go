@@ -23,7 +23,7 @@ type Config func(*Client) *Client
 func NewClient(configs ...Config) *Client {
 	c := &Client{
 		httpClient: http.DefaultClient,
-		limiter:    ratelimit.New(int(200 * time.Millisecond)),
+		limiter:    ratelimit.New(5),
 	}
 	for _, config := range configs {
 		c = config(c)

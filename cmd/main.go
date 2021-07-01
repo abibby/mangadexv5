@@ -19,9 +19,9 @@ func main() {
 	var response *mangadexv5.PaginatedResponse
 
 	request := &mangadexv5.UserFeedChaptersRequest{
-		Limit:   100,
-		Locales: []string{"en"},
-		CreatedAtSince: time.Now().
+		Limit:              100,
+		TranslatedLanguage: []string{"en"},
+		PublishAtSince: time.Now().
 			Add(-24 * 60 * time.Hour).
 			Format("2006-01-02T15:04:05"),
 	}
@@ -40,7 +40,6 @@ func main() {
 
 		for _, c := range chapters {
 			fmt.Printf("%s %s | %s V%d #%s, %s\n", c.Manga().ID, c.Manga().Title, c.Title, c.Volume, c.Chapter, c.PublishAt)
-
 		}
 	}
 
