@@ -102,6 +102,11 @@ type UserFeedChaptersRequest struct {
 	CreatedAtSince     time.Time `qstring:"createdAtSince,omitempty"`
 	UpdatedAtSince     time.Time `qstring:"updatedAtSince,omitempty"`
 	PublishAtSince     string    `qstring:"publishAtSince,omitempty"`
+	OrderCreatedAt     Order     `qstring:"order[createdAt],omitempty"`
+	OrderUpdatedAt     Order     `qstring:"order[updatedAt],omitempty"`
+	OrderPublishAt     Order     `qstring:"order[publishAt],omitempty"`
+	OrderVolume        Order     `qstring:"order[volume],omitempty"`
+	OrderChapter       Order     `qstring:"order[chapter],omitempty"`
 }
 
 func (r *UserFeedChaptersRequest) SetOffset(offset int) {
