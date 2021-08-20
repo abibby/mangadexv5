@@ -55,6 +55,8 @@ func (c *Client) request(method, url string, body io.Reader) (*http.Response, er
 	if c.token != nil {
 		r.Header.Add("Authorization", "Bearer "+c.token.Session)
 	}
+	r.Header.Add("Accept", "application/json")
+	r.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.httpClient.Do(r)
 	if err != nil {
