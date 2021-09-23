@@ -22,7 +22,7 @@ func main() {
 		Limit:              100,
 		TranslatedLanguage: []string{"en"},
 		PublishAtSince: time.Now().
-			Add(-24 * 60 * time.Hour).
+			Add(-24 * time.Hour).
 			Format("2006-01-02T15:04:05"),
 	}
 

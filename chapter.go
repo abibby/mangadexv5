@@ -132,7 +132,7 @@ func (c *Client) UserFeedChapters(request *UserFeedChaptersRequest) ([]*Chapter,
 	chapters := []*Chapter{}
 	err = resp.loadResults(&chapters)
 	if err != nil {
-		fmt.Printf("%s\n", resp.Results[0].Data.Attributes)
+		fmt.Printf("%s\n", resp.Data[0].Attributes)
 		return nil, resp, errors.Wrap(err, "failed to load chapters from response")
 	}
 
@@ -145,6 +145,10 @@ func (c *Client) AttachManga(chapters []*Chapter) error {
 
 	for _, chapter := range chapters {
 		manga[chapter.Relationships.Get("manga")] = nil
+	}
+
+	if len(manga) == 0 {
+		return nil
 	}
 
 	mangaIDs := []string{}
