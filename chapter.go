@@ -33,11 +33,11 @@ func (c *Chapter) Manga() *Manga {
 }
 
 func (c *Chapter) PageURL(atHomeServer *AtHomeServerResponse, page int) string {
-	return atHomeServer.BaseURL + "/" + path.Join("data", c.Hash, c.Data[page])
+	return atHomeServer.BaseURL + "/" + path.Join("data", atHomeServer.Chapter.Hash, atHomeServer.Chapter.Data[page])
 }
 
 func (c *Chapter) PageURLDataSaver(atHomeServer *AtHomeServerResponse, page int) string {
-	return atHomeServer.BaseURL + "/" + path.Join("data-saver", c.Hash, c.DataSaver[page])
+	return atHomeServer.BaseURL + "/" + path.Join("data-saver", atHomeServer.Chapter.Hash, atHomeServer.Chapter.DataSaver[page])
 }
 
 type ChapterListRequest struct {
