@@ -16,9 +16,6 @@ type Chapter struct {
 	Volume             *nulls.String `json:"volume"`
 	Chapter            string        `json:"chapter"`
 	TranslatedLanguage string        `json:"translatedLanguage"`
-	Hash               string        `json:"hash"`
-	Data               []string      `json:"data"`
-	DataSaver          []string      `json:"dataSaver"`
 	Uploader           string        `json:"uploader"`
 	Version            int           `json:"version"`
 	CreatedAt          time.Time     `json:"createdAt"`

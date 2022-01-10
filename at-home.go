@@ -7,7 +7,14 @@ import (
 )
 
 type AtHomeServerResponse struct {
-	BaseURL string `json:"baseUrl"`
+	BaseURL string         `json:"baseUrl"`
+	Chapter *AtHomeChapter `json:"chapter"`
+}
+
+type AtHomeChapter struct {	 
+	Hash      string   `json:"hash"`
+	Data      []string `json:"data"`
+	DataSaver []string `json:"dataSaver"`
 }
 
 func (c *Client) AtHomeServer(chapterID string) (*AtHomeServerResponse, error) {
