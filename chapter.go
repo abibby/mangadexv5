@@ -12,15 +12,18 @@ import (
 type Chapter struct {
 	Model
 
-	Title              string        `json:"title"`
-	Volume             *nulls.String `json:"volume"`
-	Chapter            string        `json:"chapter"`
-	TranslatedLanguage string        `json:"translatedLanguage"`
-	Uploader           string        `json:"uploader"`
-	Version            int           `json:"version"`
+	Title              string        `json:"title"`              // <= 255 characters
+	Volume             *nulls.String `json:"volume"`             // or null
+	Chapter            *nulls.String `json:"chapter"`            // or null <= 8 characters
+	Pages              int           `json:"pages"`              // Count of readable images for this chapter
+	TranslatedLanguage string        `json:"translatedLanguage"` // ^[a-z]{2}(-[a-z]{2})?$
+	Uploader           string        `json:"uploader"`           // <uuid>
+	ExternalURL        *nulls.String `json:"externalUrl"`        // or null <= 512 characters ^https?:// Denotes a chapter that links to an external source.
+	Version            int           `json:"version"`            // >= 1
 	CreatedAt          time.Time     `json:"createdAt"`
 	UpdatedAt          time.Time     `json:"updatedAt"`
 	PublishAt          time.Time     `json:"publishAt"`
+	ReadableAt         time.Time     `json:"readableAt"`
 
 	manga *Manga
 }
